@@ -19,8 +19,6 @@ export interface Profile {
 
 export interface Config {
   maxRunningBots: number;
-  minDM: number;
-  maxDM: number;
 }
 
 export interface CredentialsStorage {
