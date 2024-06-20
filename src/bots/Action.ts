@@ -20,11 +20,20 @@ class Action {
     priority = 0,
     ignoreErrors = false,
   }: ActionParams) {
-    this.key = key;
+    this.key = Action.createKey(key);
     this.params = params;
     this.retries = retries;
     this.priority = priority;
     this.ignoreErrors = ignoreErrors;
+  }
+
+  static PREFIX = "ACTION_";
+
+  static createKey(key: string) {
+    if (!key.startsWith(this.PREFIX)) {
+      return `${this.PREFIX}${key}`;
+    }
+    return key;
   }
 }
 
