@@ -1,0 +1,8 @@
+node_modules
+
+src/db/storage.json
+
+logs.txt
+
+.DS_Store
+src/.DS_Store

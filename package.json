@@ -1,0 +1,21 @@
+{
+  "name": "x-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.14.5",
+    "axios": "^1.7.2",
+    "fake-useragent": "^1.0.1",
+    "prettier": "^3.3.2",
+    "puppeteer": "^22.10.1",
+    "simple-json-db": "^2.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
