@@ -45,11 +45,13 @@ class Bot {
   }
 
   addAction(key: string, options: Omit<ActionParams, "key">) {
-    if (!this.hasOwnProperty(key)) {
-      throw new Error(`${key} does not exist!`);
+    const actionKey = Action.createKey(key);
+
+    if (!this.hasOwnProperty(actionKey)) {
+      throw new Error(`${actionKey} does not exist!`);
     }
 
-    const action = new Action({ key, ...options });
+    const action = new Action({ key: actionKey, ...options });
     this.actions.push(action);
   }
 
@@ -190,7 +192,7 @@ class Bot {
     return dbManager.patchBotMeta(this.username, payload);
   }
 
-  async checkIfLoggedIn() {
+  async ACTION_checkIfLoggedIn() {
     if (this.page === undefined) {
       this.page = await this.browser.newPage();
     }
@@ -198,7 +200,7 @@ class Bot {
     this.addAction("logIn", { retries: 3, priority: -100 });
   }
 
-  async logIn() {
+  async ACTION_logIn() {
     if (this.page === undefined) {
       this.page = await this.browser.newPage();
     }
@@ -206,7 +208,7 @@ class Bot {
     await this.page.waitForNavigation({ timeout: 10000 });
   }
 
-  async sendMessage(profileUrl: string, message: string) {
+  async ACTION_sendMessage(profileUrl: string, message: string) {
     if (this.page === undefined) {
       this.page = await this.browser.newPage();
     }
