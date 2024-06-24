@@ -5,6 +5,7 @@ import {
   CHECK_IF_LOGGED_IN,
   COLLECT_MESSAGES,
   LOG_IN,
+  SEND_MESSAGE,
 } from "../actions/constants";
 
 async function checkIfLoggedIn(this: Bot) {
@@ -12,7 +13,7 @@ async function checkIfLoggedIn(this: Bot) {
     this.page = await this.browser.newPage();
   }
 
-  // this.addAction(LOG_IN, { retries: 3, priority: -100 });
+  // TODO checkIfLoggedIn
 }
 
 async function logIn(this: Bot) {
@@ -20,7 +21,15 @@ async function logIn(this: Bot) {
     this.page = await this.browser.newPage();
   }
 
-  await this.page.waitForNavigation({ timeout: 10000 });
+  // TODO logIn
+}
+
+async function sendMessage(this: Bot) {
+  if (this.page === undefined) {
+    this.page = await this.browser.newPage();
+  }
+
+  // TODO sendMessage
 }
 
 async function collectMessages(this: Bot) {
@@ -72,6 +81,7 @@ const handlers: Handlers = {
   [CHECK_IF_LOGGED_IN]: checkIfLoggedIn,
   [LOG_IN]: logIn,
   [COLLECT_MESSAGES]: collectMessages,
+  [SEND_MESSAGE]: sendMessage,
 };
 
 export default handlers;
