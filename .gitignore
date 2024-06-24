@@ -6,3 +6,5 @@ logs.txt
 
 .DS_Store
 src/.DS_Store
+
+dist

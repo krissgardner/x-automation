@@ -4,7 +4,8 @@
   "description": "Create browser automations for X (Twitter)",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
   },
   "author": "Kriss Gardner",
   "license": "ISC",
