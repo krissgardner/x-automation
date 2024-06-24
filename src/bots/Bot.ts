@@ -181,6 +181,8 @@ class Bot {
       return false;
     }
 
+    // TODO: Add validation checks
+
     return true;
   }
 
