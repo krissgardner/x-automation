@@ -1,12 +1,12 @@
 {
   "name": "x-automation",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create browser automations for X (Twitter)",
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts"
   },
-  "author": "",
+  "author": "Kriss Gardner",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^20.14.5",
