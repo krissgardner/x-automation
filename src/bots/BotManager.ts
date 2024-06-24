@@ -1,7 +1,7 @@
 import dbManager from "../db";
 import Bot from "./Bot";
 import { IDLE, ERROR } from "../globalConstants";
-import { shuffle, waitUntil, getRandomNumber } from "../utils";
+import { shuffle } from "../utils";
 
 class BotManager {
   bots: { [key: string]: Bot };
@@ -46,44 +46,44 @@ class BotManager {
     }
   }
 
-  async assignDirectMessages() {
-    const accounts: any[] = []; // TODO: GET accounts from DB
-    if (!accounts.length) {
-      return;
-    }
-
-    const { config } = dbManager.bots;
-
-    const generator = this.getBotGenerator();
-
-    while (true) {
-      const bot = generator.next().value;
-      if (bot === undefined) {
-        break;
-      }
-
-      await waitUntil(() => {
-        return this.getRunningBots().length < dbManager.maxRunningBots;
-      });
-
-      do {
-        // TODO: bot.addAction("doRandomActions");
-
-        const noAccounts = getRandomNumber(config.minDM, config.maxDM);
-        const selectedAccounts = accounts.splice(0, noAccounts);
-
-        selectedAccounts.forEach((account) => {
-          bot.addAction("sendMessage", {
-            params: [account],
-            retries: 1,
-            ignoreErrors: true,
-          });
-        });
-      } while (accounts.length > 0);
-    }
-
-    // TODO: Delete accounts from DB
-  }
+  // async assignDirectMessages() {
+  //   const accounts: any[] = []; // TODO: GET accounts from DB
+  //   if (!accounts.length) {
+  //     return;
+  //   }
+  //
+  //   const { config } = dbManager.bots;
+  //
+  //   const generator = this.getBotGenerator();
+  //
+  //   while (true) {
+  //     const bot = generator.next().value;
+  //     if (bot === undefined) {
+  //       break;
+  //     }
+  //
+  //     await waitUntil(() => {
+  //       return this.getRunningBots().length < dbManager.maxRunningBots;
+  //     });
+  //
+  //     do {
+  //       // TODO: bot.addAction("doRandomActions");
+  //
+  //       const noAccounts = getRandomNumber(config.minDM, config.maxDM);
+  //       const selectedAccounts = accounts.splice(0, noAccounts);
+  //
+  //       selectedAccounts.forEach((account) => {
+  //         bot.addAction("sendMessage", {
+  //           params: [account],
+  //           retries: 1,
+  //           ignoreErrors: true,
+  //         });
+  //       });
+  //     } while (accounts.length > 0);
+  //   }
+  //
+  //   // TODO: Delete accounts from DB
+  // }
 }
 
 export default BotManager;
