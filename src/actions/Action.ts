@@ -8,7 +8,7 @@ export interface ActionParams {
   ignoreErrors?: boolean;
 }
 
-class Action {
+export class Action {
   key: ActionType;
   params: any[];
   retries: number;
@@ -44,5 +44,3 @@ class Action {
     this.ignoreErrors = ignoreErrors;
   }
 }
-
-export default Action;

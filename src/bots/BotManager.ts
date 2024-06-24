@@ -1,7 +1,7 @@
 import dbManager from "@/db";
-import Bot from "./Bot";
 import { IDLE, ERROR } from "@/globalConstants";
 import { shuffle } from "@/utils";
+import Bot from "./Bot";
 
 class BotManager {
   bots: { [key: string]: Bot };

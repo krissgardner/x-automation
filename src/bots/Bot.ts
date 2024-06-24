@@ -8,7 +8,7 @@ import {
   WAITING,
   WORKING,
 } from "@/globalConstants";
-import Action, { ActionParams } from "@/actions/Action";
+import { Action, ActionParams } from "@/actions";
 import handlers from "./handlers";
 
 export interface BotParams {
