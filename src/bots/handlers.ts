@@ -1,4 +1,4 @@
-import * as selectors from "../selectors";
+import * as selectors from "@/selectors";
 import Bot from "./Bot";
 import {
   ActionType,
@@ -6,7 +6,7 @@ import {
   COLLECT_MESSAGES,
   LOG_IN,
   SEND_MESSAGE,
-} from "../actions/constants";
+} from "@/actions/constants";
 
 async function checkIfLoggedIn(this: Bot) {
   if (this.page === undefined) {

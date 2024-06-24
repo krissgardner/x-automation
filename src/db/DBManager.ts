@@ -1,5 +1,5 @@
 import JSONdb from "simple-json-db";
-import { BotsStorage, CredentialsStorage } from "../types";
+import { BotsStorage, CredentialsStorage } from "@/types";
 
 class DBManager extends JSONdb {
   checkIntegrity() {

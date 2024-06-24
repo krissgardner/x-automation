@@ -1,5 +1,5 @@
-import adsPowerManager from "../adsPower";
-import dbManager from "../db";
+import adsPowerManager from "@/adsPower";
+import dbManager from "@/db";
 import {
   CLOSING,
   ERROR,
@@ -7,8 +7,8 @@ import {
   STARTING,
   WAITING,
   WORKING,
-} from "../globalConstants";
-import Action, { ActionParams } from "../actions/Action";
+} from "@/globalConstants";
+import Action, { ActionParams } from "@/actions/Action";
 import handlers from "./handlers";
 
 export interface BotParams {

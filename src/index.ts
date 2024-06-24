@@ -8,7 +8,7 @@ setupProcess();
   // Start watchers for all bots
   await botManager.startBots();
 
-  await botManager.assignDirectMessages();
+  // await botManager.assignDirectMessages();
 
   await waitUntil(() => {
     return botManager.getRunningBots().length === 0;

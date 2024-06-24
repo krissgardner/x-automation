@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import puppeteer, { Browser } from "puppeteer";
-import { BrowserConnection, BrowserStatus } from "../types";
+import { BrowserConnection, BrowserStatus } from "@/types";
 
 class AdsPowerManager {
   readonly endpoint: string;
