@@ -193,36 +193,6 @@ class Bot {
   patchMeta(payload: any) {
     return dbManager.patchBotMeta(this.username, payload);
   }
-
-  async ACTION_checkIfLoggedIn() {
-    if (this.page === undefined) {
-      this.page = await this.browser.newPage();
-    }
-
-    this.addAction("logIn", { retries: 3, priority: -100 });
-  }
-
-  async ACTION_logIn() {
-    if (this.page === undefined) {
-      this.page = await this.browser.newPage();
-    }
-
-    await this.page.waitForNavigation({ timeout: 10000 });
-  }
-
-  async ACTION_sendMessage(profileUrl: string, message: string) {
-    if (this.page === undefined) {
-      this.page = await this.browser.newPage();
-    }
-
-    await this.page.goto(profileUrl);
-
-    const messageButtonSelector =
-      "#mount_0_0_3y > div > div > div.x9f619.x1n2onr6.x1ja2u2z > div > div > div.x78zum5.xdt5ytf.x1t2pt76.x1n2onr6.x1ja2u2z.x10cihs4 > div:nth-child(2) > div > div.x1gryazu.xh8yej3.x10o80wk.x14k21rp.x17snn68.x6osk4m.x1porb0y > section > main > div > header > section.x1xdureb.x1agbcgv.x1wo17tc.xieb3on.x6ikm8r.x10wlt62.xlrpkbc > div > div > div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1n2onr6.x1plvlek.xryxfnj.x1c4vz4f.x2lah0s.x1q0g3np.xqjyukv.x1qjc9v5.x1oa3qoh.x1nhvcw1 > div > div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1n2onr6.x6ikm8r.x10wlt62.x1iyjqo2.x2lwn1j.xeuugli.xdt5ytf.xqjyukv.x1qjc9v5.x1oa3qoh.x1nhvcw1 > div";
-
-    await this.page.waitForSelector(messageButtonSelector, { timeout: 5000 });
-    await this.page.click(messageButtonSelector, { timeout: 5000 });
-  }
 }
 
 export default Bot;
