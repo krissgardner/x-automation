@@ -45,13 +45,8 @@ class Bot {
   }
 
   addAction(key: string, options: Omit<ActionParams, "key">) {
-    const actionKey = Action.createKey(key);
-
-    if (!this.hasOwnProperty(actionKey)) {
-      throw new Error(`${actionKey} does not exist!`);
-    }
-
-    const action = new Action({ key: actionKey, ...options });
+    // Action constructor validates keys
+    const action = new Action({ key, ...options });
     this.actions.push(action);
   }
 
