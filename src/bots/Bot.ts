@@ -1,14 +1,14 @@
 import adsPowerManager from "../adsPower";
 import dbManager from "../db";
 import {
+  CLOSING,
+  ERROR,
   IDLE,
   STARTING,
   WAITING,
   WORKING,
-  ERROR,
-  CLOSING,
 } from "../globalConstants";
-import Action, { ActionParams } from "./Action";
+import Action, { ActionParams } from "../actions/Action";
 
 export interface BotParams {
   username: string;
@@ -50,7 +50,7 @@ class Bot {
     this.actions.push(action);
   }
 
-  async initBrowser() {
+  async init() {
     const browser = await adsPowerManager.getBrowser(this.ads_power_profile_id);
     if (!browser) {
       return;
@@ -80,8 +80,8 @@ class Bot {
             this.status = STARTING;
 
             try {
-              const botRunning = await this.init();
-              if (botRunning) {
+              const browser = await this.init();
+              if (browser) {
                 this.status = WAITING;
               } else {
                 this.status = ERROR;
@@ -166,19 +166,6 @@ class Bot {
     }, 1000);
 
     console.log(`LISTENING ${this.username}`);
-  }
-
-  async init() {
-    console.log(`INIT ${this.username}`);
-
-    const browser = await this.initBrowser();
-    if (!browser) {
-      return false;
-    }
-
-    // TODO: Add validation checks
-
-    return true;
   }
 
   get meta() {
