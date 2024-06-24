@@ -18,5 +18,8 @@
     "simple-json-db": "^2.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "tsconfig-paths": "^4.2.0"
   }
 }
