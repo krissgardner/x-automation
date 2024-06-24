@@ -1,3 +1,5 @@
+import * as actions from "./actions";
+
 export interface ActionParams {
   key: string;
   params?: any[];
@@ -13,6 +15,19 @@ class Action {
   priority: number;
   ignoreErrors: boolean;
 
+  static isValidKey(key: string, raiseException = false) {
+    const validActions = Object.values(actions) as string[];
+    if (validActions.includes(key)) {
+      return true;
+    }
+
+    if (raiseException) {
+      throw new Error(`Action ${key} doesn't exist!`);
+    }
+
+    return false;
+  }
+
   constructor({
     key,
     params = [],
@@ -20,20 +35,13 @@ class Action {
     priority = 0,
     ignoreErrors = false,
   }: ActionParams) {
-    this.key = Action.createKey(key);
+    Action.isValidKey(key, true);
+
+    this.key = key;
     this.params = params;
     this.retries = retries;
     this.priority = priority;
     this.ignoreErrors = ignoreErrors;
-  }
-
-  static PREFIX = "ACTION_";
-
-  static createKey(key: string) {
-    if (!key.startsWith(this.PREFIX)) {
-      return `${this.PREFIX}${key}`;
-    }
-    return key;
   }
 }
 
