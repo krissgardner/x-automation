@@ -1,10 +1,11 @@
 import * as selectors from "../selectors";
 import Bot from "./Bot";
 import {
+  ActionType,
   CHECK_IF_LOGGED_IN,
   COLLECT_MESSAGES,
   LOG_IN,
-} from "../actions/actions";
+} from "../actions/constants";
 
 async function checkIfLoggedIn(this: Bot) {
   if (this.page === undefined) {
@@ -63,7 +64,11 @@ async function collectMessages(this: Bot) {
   return allMessages;
 }
 
-const handlers = {
+export type Handlers = {
+  [key in ActionType]: (this: Bot, ...args: unknown[]) => Promise<unknown>;
+};
+
+const handlers: Handlers = {
   [CHECK_IF_LOGGED_IN]: checkIfLoggedIn,
   [LOG_IN]: logIn,
   [COLLECT_MESSAGES]: collectMessages,

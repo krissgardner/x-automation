@@ -1,4 +1,4 @@
-import * as actions from "./actions";
+import { ACTIONS, ActionType } from "./constants";
 
 export interface ActionParams {
   key: string;
@@ -9,15 +9,15 @@ export interface ActionParams {
 }
 
 class Action {
-  key: string;
+  key: ActionType;
   params: any[];
   retries: number;
   priority: number;
   ignoreErrors: boolean;
 
   static isValidKey(key: string, raiseException = false) {
-    const validActions = Object.values(actions) as string[];
-    if (validActions.includes(key)) {
+    // @ts-ignore trivial
+    if (ACTIONS.includes(key)) {
       return true;
     }
 
@@ -37,7 +37,7 @@ class Action {
   }: ActionParams) {
     Action.isValidKey(key, true);
 
-    this.key = key;
+    this.key = key as ActionType;
     this.params = params;
     this.retries = retries;
     this.priority = priority;

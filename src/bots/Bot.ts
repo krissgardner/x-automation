@@ -9,6 +9,7 @@ import {
   WORKING,
 } from "../globalConstants";
 import Action, { ActionParams } from "../actions/Action";
+import handlers from "./handlers";
 
 export interface BotParams {
   username: string;
@@ -137,10 +138,8 @@ class Bot {
           `${this.username}: (${action.retries}) ${action.key} started!`,
         );
 
-        // try block should catch invalid key names
-        // TODO: Implement function binding / method naming convention (ACTION_[key]) in order to prevent mistakes
-        // @ts-ignore
-        await this[action.key](...action.params);
+        // Magic
+        await handlers[action.key].call(this, ...action.params);
 
         console.log(
           `${this.username}: (${action.retries}) ${action.key} done!`,
