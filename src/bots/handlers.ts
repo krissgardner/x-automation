@@ -2,10 +2,11 @@ import * as selectors from "@/selectors";
 import {
   ActionType,
   CHECK_IF_LOGGED_IN,
-  COLLECT_MESSAGES,
+  COLLECT_LINKS,
   LOG_IN,
   SEND_MESSAGE,
 } from "@/actions";
+import { delay } from "@/utils";
 import Bot from "./Bot";
 
 async function checkIfLoggedIn(this: Bot) {
@@ -32,45 +33,58 @@ async function sendMessage(this: Bot) {
   // TODO sendMessage
 }
 
-async function collectMessages(this: Bot) {
+async function collectLinks(this: Bot) {
   if (this.page === undefined) {
     this.page = await this.browser.newPage();
   }
 
   await this.page.goto("https://x.com/messages");
 
-  const conversationElements = await this.page.$$(selectors.CONVERSATIONS);
+  await this.page.waitForNavigation({
+    timeout: 5000,
+    waitUntil: "networkidle2",
+  });
 
-  const allMessages = [];
+  const convoElements = await this.page.$$(selectors.CONVERSATIONS);
 
-  for (const elem of conversationElements) {
-    const text = await this.page.evaluate(
-      (e: HTMLElement) => e.textContent,
+  const messageData = [] as { user: string; links: string[] }[];
+
+  for (const elem of convoElements) {
+    const innerText = await this.page.evaluate(
+      (e: HTMLElement) => e.innerText,
       elem,
     );
-    if (text.includes("@")) {
-      await elem.click();
-
-      await this.page.waitForSelector(selectors.CURRENT_MESSAGES);
-
-      const messages: HTMLElement[] = await this.page.$$(
-        selectors.CURRENT_MESSAGES,
-      );
-
-      const messagesText = await Promise.all(
-        messages.map(async (message) => {
-          return await this.page.evaluate(
-            (el: HTMLElement) => el.textContent,
-            message,
-          );
-        }),
-      );
-
-      // push the obtained conversation messages into the allMessages array
-      allMessages.push(messagesText);
+    if (typeof innerText !== "string" || !innerText.includes("@")) {
+      continue;
     }
+
+    const [, user] = innerText.split("\n");
+    if (!user) {
+      throw new Error("User handler not found!");
+    }
+
+    await elem.click();
+
+    await this.page.waitForSelector(selectors.DM_SCROLLER_CONTAINER);
+
+    const container: HTMLElement = await this.page.$(
+      selectors.DM_SCROLLER_CONTAINER,
+    );
+
+    // Get all a links inside container, then get all href attributes
+    const hrefs = await this.page.evaluate((container: HTMLElement) => {
+      const anchors = Array.from(container.getElementsByTagName("a"));
+      return anchors.map((a) => a.href);
+    }, container);
+
+    messageData.push({ user, links: hrefs });
+
+    await delay(200);
   }
-  return allMessages;
+
+  // TODO: Store data
+
+  return messageData;
 }
 
 export type Handlers = {
@@ -80,7 +94,7 @@ export type Handlers = {
 const handlers: Handlers = {
   [CHECK_IF_LOGGED_IN]: checkIfLoggedIn,
   [LOG_IN]: logIn,
-  [COLLECT_MESSAGES]: collectMessages,
+  [COLLECT_LINKS]: collectLinks,
   [SEND_MESSAGE]: sendMessage,
 };
 
