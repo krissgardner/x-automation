@@ -45,7 +45,7 @@ class Bot {
     this.autoClose = undefined;
   }
 
-  addAction(key: string, options: Omit<ActionParams, "key">) {
+  addAction(key: string, options?: Omit<ActionParams, "key">) {
     // Action constructor validates keys
     const action = new Action({ key, ...options });
     this.actions.push(action);
