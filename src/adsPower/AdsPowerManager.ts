@@ -12,6 +12,7 @@ class AdsPowerManager {
   }
 
   async checkServerConnection(): Promise<boolean> {
+    // https://localapi-doc-en.adspower.com/docs/6DSiws
     try {
       const res: AxiosResponse = await axios.get(`${this.endpoint}/status`, {
         headers: {
@@ -26,13 +27,15 @@ class AdsPowerManager {
   }
 
   async openBrowser(profileId: string): Promise<BrowserConnection | undefined> {
+    // https://localapi-doc-en.adspower.com/docs/FFMFMf
     try {
       const res: AxiosResponse = await axios.get(
         `${this.endpoint}/api/v1/browser/start`,
         {
           params: {
             user_id: profileId,
-            open_tabs: 0,
+            open_tabs: 1,
+            ip_tab: 0,
           },
           headers: {
             "api-key": this.apiKey,
@@ -126,6 +129,7 @@ class AdsPowerManager {
     const browserWSEndpoint = connection;
     return await puppeteer.connect({
       browserWSEndpoint,
+      defaultViewport: { width: 1500, height: 800 },
     });
   }
 }
