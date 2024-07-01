@@ -39,8 +39,7 @@ class DBManager extends JSONdb {
 
   getBotMeta(username: string) {
     const key = this.metaKey(username);
-    const meta = this.get("meta") || {}; // Empty Meta
-    return meta[key] || {};
+    return this.get(key);
   }
 
   patchBotMeta(username: string, payload: any) {
@@ -52,9 +51,7 @@ class DBManager extends JSONdb {
       ...payload,
     };
 
-    const meta = this.get("meta") || {};
-    meta[key] = botMeta;
-    this.set("meta", meta);
+    this.set(key, result);
 
     return result;
   }
