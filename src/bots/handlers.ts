@@ -47,7 +47,7 @@ async function collectLinks(this: Bot) {
 
   const convoElements = await this.page.$$(selectors.CONVERSATIONS);
 
-  const messageData = [] as { user: string; links: string[] }[];
+  const conversations = [] as { user: string; links: string[] }[];
 
   for (const elem of convoElements) {
     const innerText = await this.page.evaluate(
@@ -72,19 +72,27 @@ async function collectLinks(this: Bot) {
     );
 
     // Get all a links inside container, then get all href attributes
-    const hrefs = await this.page.evaluate((container: HTMLElement) => {
+    const allHrefs = await this.page.evaluate((container: HTMLElement) => {
       const anchors = Array.from(container.getElementsByTagName("a"));
       return anchors.map((a) => a.href);
     }, container);
 
-    messageData.push({ user, links: hrefs });
+    const hrefs = allHrefs.filter((url: unknown) => {
+      return (
+        typeof url === "string" &&
+        !url.toLowerCase().includes(this.username.toLowerCase()) &&
+        url.includes("/status/")
+      );
+    });
+
+    conversations.push({ user, links: hrefs });
 
     await delay(200);
   }
 
-  // TODO: Store data
+  this.patchMeta({ conversations });
 
-  return messageData;
+  return conversations;
 }
 
 export type Handlers = {
