@@ -95,6 +95,73 @@ async function collectLinks(this: Bot) {
   return conversations;
 }
 
+async function repostTweet(this: Bot, url: string, user: string) {
+  if (!url || !url.includes("/status/")) {
+    throw new Error(`Invalid url: ${url}`);
+  }
+
+  if (this.page === undefined) {
+    this.page = await this.browser.newPage();
+  }
+
+  await this.page.goto(url);
+
+  await this.page.waitForNavigation({
+    timeout: 5000,
+    waitUntil: "networkidle2",
+  });
+
+  const articles = await this.page.$$("article");
+  for (const article of articles) {
+    const innerText = await this.page.evaluate(
+      (e: HTMLElement) => e.innerText,
+      article,
+    );
+    if (typeof innerText !== "string" || !innerText.includes("@")) {
+      continue;
+    }
+
+    try {
+      const [, articleUser] = innerText.split("\n");
+      if (
+        !articleUser ||
+        articleUser.trim().toLowerCase() !== user.trim().toLowerCase()
+      ) {
+        continue;
+      }
+    } catch (e) {
+      // Not important at this stage
+      continue;
+    }
+
+    // Identified a tweet in the thread from the user
+
+    const retweetBtn = await this.page.evaluate((e: HTMLElement) => {
+      return e.querySelector('button[data-testid="retweet"]');
+    }, article);
+    if (!retweetBtn) {
+      throw new Error("Retweet button not found");
+    }
+
+    await retweetBtn.click();
+
+    await delay(200);
+
+    const repostDiv = await this.page.evaluate((e: HTMLElement) => {
+      return e.querySelector('div[data-testid="retweetConfirm"]');
+    }, article);
+    if (!repostDiv) {
+      throw new Error("Repost button not found");
+    }
+
+    await retweetBtn.click();
+
+    await delay(1000);
+
+    break;
+  }
+}
+
 export type Handlers = {
   [key in ActionType]: (this: Bot, ...args: unknown[]) => Promise<unknown>;
 };
