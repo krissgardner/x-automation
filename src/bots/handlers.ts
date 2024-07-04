@@ -96,7 +96,7 @@ async function collectLinks(this: Bot) {
   return conversations;
 }
 
-async function repostTweet(this: Bot, url: string, user: string) {
+async function repost(this: Bot, url: string, user: string) {
   if (!url || !url.includes("/status/")) {
     throw new Error(`Invalid url: ${url}`);
   }
@@ -164,7 +164,7 @@ async function repostTweet(this: Bot, url: string, user: string) {
 }
 
 export type Handlers = {
-  [key in ActionType]: (this: Bot, ...args: unknown[]) => Promise<unknown>;
+  [key in ActionType]: (this: Bot, ...args: any[]) => Promise<unknown>;
 };
 
 const handlers: Handlers = {
