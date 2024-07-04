@@ -10,6 +10,7 @@ import {
 } from "@/globalConstants";
 import { Action, ActionParams } from "@/actions";
 import handlers from "./handlers";
+import { Browser, Page } from "puppeteer";
 
 export interface BotParams {
   username: string;
@@ -22,8 +23,8 @@ class Bot {
   password: string;
   ads_power_profile_id: string;
   status: number;
-  browser: any;
-  page: any;
+  browser?: Browser;
+  page?: Page;
   actions: Action[];
   interval: NodeJS.Timeout | undefined;
   autoClose: NodeJS.Timeout | undefined;
@@ -70,7 +71,7 @@ class Bot {
 
   async closeBrowser() {
     console.log("CLOSING", this.username);
-    return await this.browser?.close();
+    return this.browser?.close();
   }
 
   async startTaskWatcher() {
