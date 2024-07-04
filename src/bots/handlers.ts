@@ -11,31 +11,23 @@ import { delay } from "@/utils";
 import Bot from "./Bot";
 
 async function checkIfLoggedIn(this: Bot) {
-  if (this.page === undefined) {
-    this.page = await this.browser.newPage();
-  }
-
   // TODO checkIfLoggedIn
 }
 
 async function logIn(this: Bot) {
-  if (this.page === undefined) {
-    this.page = await this.browser.newPage();
-  }
-
   // TODO logIn
 }
 
 async function sendMessage(this: Bot) {
-  if (this.page === undefined) {
-    this.page = await this.browser.newPage();
-  }
-
   // TODO sendMessage
 }
 
 async function collectLinks(this: Bot) {
-  if (this.page === undefined) {
+  if (!this.browser) {
+    throw new Error("Browser does not exist!");
+  }
+
+  if (!this.page) {
     this.page = await this.browser.newPage();
   }
 
@@ -55,7 +47,7 @@ async function collectLinks(this: Bot) {
       (e: HTMLElement) => e.innerText,
       elem,
     );
-    if (typeof innerText !== "string" || !innerText.includes("@")) {
+    if (!innerText || !innerText.includes("@")) {
       continue;
     }
 
@@ -68,12 +60,13 @@ async function collectLinks(this: Bot) {
 
     await this.page.waitForSelector(selectors.DM_SCROLLER_CONTAINER);
 
-    const container: HTMLElement = await this.page.$(
-      selectors.DM_SCROLLER_CONTAINER,
-    );
+    const container = await this.page.$(selectors.DM_SCROLLER_CONTAINER);
+    if (container === null) {
+      throw new Error("selectors.DM_SCROLLER_CONTAINER returned null");
+    }
 
     // Get all a links inside container, then get all href attributes
-    const allHrefs = await this.page.evaluate((container: HTMLElement) => {
+    const allHrefs = await this.page.evaluate((container) => {
       const anchors = Array.from(container.getElementsByTagName("a"));
       return anchors.map((a) => a.href);
     }, container);
@@ -97,6 +90,10 @@ async function collectLinks(this: Bot) {
 }
 
 async function repost(this: Bot, url: string, user: string) {
+  if (!this.browser) {
+    throw new Error("Browser does not exist!");
+  }
+
   if (!url || !url.includes("/status/")) {
     throw new Error(`Invalid url: ${url}`);
   }
@@ -107,18 +104,18 @@ async function repost(this: Bot, url: string, user: string) {
 
   await this.page.goto(url);
 
-  await this.page.waitForNavigation({
-    timeout: 5000,
-    waitUntil: "networkidle2",
+  await this.page.waitForSelector("article", {
+    timeout: 10000,
   });
 
   const articles = await this.page.$$("article");
+
   for (const article of articles) {
     const innerText = await this.page.evaluate(
       (e: HTMLElement) => e.innerText,
       article,
     );
-    if (typeof innerText !== "string" || !innerText.includes("@")) {
+    if (!innerText || !innerText.includes("@")) {
       continue;
     }
 
@@ -137,26 +134,20 @@ async function repost(this: Bot, url: string, user: string) {
 
     // Identified a tweet in the thread from the user
 
-    const retweetBtn = await this.page.evaluate((e: HTMLElement) => {
-      return e.querySelector('button[data-testid="retweet"]');
-    }, article);
+    const retweetBtn = await article.$('button[data-testid="retweet"]');
     if (!retweetBtn) {
       throw new Error("Retweet button not found");
     }
 
     await retweetBtn.click();
+    await delay(500);
 
-    await delay(200);
-
-    const repostDiv = await this.page.evaluate((e: HTMLElement) => {
-      return e.querySelector('div[data-testid="retweetConfirm"]');
-    }, article);
+    const repostDiv = await this.page.$(selectors.REPOST_MENU_ITEM);
     if (!repostDiv) {
-      throw new Error("Repost button not found");
+      throw new Error("Repost div not found");
     }
 
-    await retweetBtn.click();
-
+    await repostDiv.click();
     await delay(1000);
 
     break;
