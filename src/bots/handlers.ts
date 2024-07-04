@@ -4,6 +4,7 @@ import {
   CHECK_IF_LOGGED_IN,
   COLLECT_LINKS,
   LOG_IN,
+  REPOST,
   SEND_MESSAGE,
 } from "@/actions";
 import { delay } from "@/utils";
@@ -171,6 +172,7 @@ const handlers: Handlers = {
   [LOG_IN]: logIn,
   [COLLECT_LINKS]: collectLinks,
   [SEND_MESSAGE]: sendMessage,
+  [REPOST]: repost,
 };
 
 export default handlers;
