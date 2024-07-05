@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "collectLinks": "ts-node src/scripts/collectLinks.ts"
   },
   "author": "Kriss Gardner",
   "license": "ISC",
