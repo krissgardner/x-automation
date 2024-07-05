@@ -13,12 +13,13 @@ export interface BrowserConnection {
 
 export interface Profile {
   username: string;
-  password: string;
   ads_power_profile_id: string;
+  dmLink?: string;
 }
 
 export interface Config {
   maxRunningBots: number;
+  dmTemplate: string;
 }
 
 export interface CredentialsStorage {

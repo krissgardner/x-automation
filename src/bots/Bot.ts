@@ -14,13 +14,11 @@ import { Browser, Page } from "puppeteer";
 
 export interface BotParams {
   username: string;
-  password: string;
   ads_power_profile_id: string;
 }
 
 class Bot {
   username: string;
-  password: string;
   ads_power_profile_id: string;
   status: number;
   browser?: Browser;
@@ -29,13 +27,12 @@ class Bot {
   interval: NodeJS.Timeout | undefined;
   autoClose: NodeJS.Timeout | undefined;
 
-  constructor({ username, password, ads_power_profile_id }: BotParams) {
+  constructor({ username, ads_power_profile_id }: BotParams) {
     if (!ads_power_profile_id) {
       throw new Error(`"ads_power_profile_id" is required!`);
     }
 
     this.username = username;
-    this.password = password;
     this.ads_power_profile_id = ads_power_profile_id;
 
     this.status = IDLE;
