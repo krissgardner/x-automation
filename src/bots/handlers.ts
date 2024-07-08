@@ -10,6 +10,8 @@ import {
 } from "@/actions";
 import { delay } from "@/utils";
 import Bot from "./Bot";
+import { MetaConversation } from "@/types";
+import dbManager from "@/db";
 
 async function checkIfLoggedIn(this: Bot) {
   // TODO checkIfLoggedIn
@@ -17,14 +19,6 @@ async function checkIfLoggedIn(this: Bot) {
 
 async function logIn(this: Bot) {
   // TODO logIn
-}
-
-async function sendMessage(this: Bot) {
-  // TODO sendMessage
-}
-
-async function repostMedia(this: Bot) {
-  // TODO repostMedia
 }
 
 async function collectLinks(this: Bot) {
@@ -44,11 +38,7 @@ async function collectLinks(this: Bot) {
 
   const convoElements = await this.page.$$(selectors.CONVERSATIONS);
 
-  const conversations = [] as {
-    user: string;
-    links: string[];
-    url: string;
-  }[];
+  const conversations: MetaConversation[] = [];
 
   for (const elem of convoElements) {
     const innerText = await this.page.evaluate(
@@ -188,6 +178,68 @@ async function repost(this: Bot, urls: string[], user: string) {
       break;
     }
   }
+}
+
+async function sendMessage(this: Bot, user: string) {
+  if (!user) {
+    throw new Error("user not defined!");
+  }
+
+  if (!user.startsWith("@")) {
+    user = "@" + user;
+  }
+
+  if (!this.browser) {
+    throw new Error("Browser does not exist!");
+  }
+
+  if (this.page === undefined) {
+    this.page = await this.browser.newPage();
+  }
+
+  const conversations = this.meta.conversations || [];
+  const conversation = conversations.find(
+    (c: MetaConversation) => c.user === user,
+  );
+  const url = conversation?.url;
+  if (!url) {
+    throw new Error("Conversation url not found!");
+  }
+
+  await this.page.goto(url);
+
+  await this.page.waitForSelector(selectors.TEXTBOX);
+
+  const textbox = await this.page.$(selectors.TEXTBOX);
+  if (!textbox) {
+    throw new Error("Textbox not found!");
+  }
+
+  await textbox.click();
+  await delay(100);
+
+  let message = dbManager.bots.config.dmTemplate;
+
+  const regexp = /{{(\w+)}}/g; // matches {{variable}}
+  message = message.replace(regexp, (_match, variable: string) => {
+    // @ts-ignore
+    const botParam = this[variable];
+
+    if (typeof botParam === "string") {
+      throw new Error(
+        `Variable "${variable}" is not defined or is not a string!`,
+      );
+    }
+
+    return botParam;
+  });
+
+  // Type the resulting message using keyboard events
+  await this.page.keyboard.type(message);
+}
+
+async function repostMedia(this: Bot) {
+  // TODO repostMedia
 }
 
 export type Handlers = {

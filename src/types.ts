@@ -38,3 +38,9 @@ export interface Storage {
   bots: BotsStorage;
   meta: Record<string, unknown>;
 }
+
+export type MetaConversation = {
+  user: string;
+  links: string[];
+  url: string;
+};
