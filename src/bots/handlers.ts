@@ -44,7 +44,11 @@ async function collectLinks(this: Bot) {
 
   const convoElements = await this.page.$$(selectors.CONVERSATIONS);
 
-  const conversations = [] as { user: string; links: string[] }[];
+  const conversations = [] as {
+    user: string;
+    links: string[];
+    url: string;
+  }[];
 
   for (const elem of convoElements) {
     const innerText = await this.page.evaluate(
@@ -83,7 +87,7 @@ async function collectLinks(this: Bot) {
       );
     });
 
-    conversations.push({ user, links: hrefs });
+    conversations.push({ user, links: hrefs, url: this.page.url() });
 
     await delay(200);
   }
