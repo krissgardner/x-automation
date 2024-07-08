@@ -13,4 +13,5 @@ export const ACTIONS = [
   REPOST,
   REPOST_MEDIA,
 ] as const;
+
 export type ActionType = (typeof ACTIONS)[number];
