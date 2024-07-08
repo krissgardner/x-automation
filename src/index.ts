@@ -25,6 +25,10 @@ setupProcess();
     bot.addAction(REPOST_MEDIA, { priority: 50 });
   }
 
+  await waitUntil(() => {
+    return botManager.getRunningBots().length <= 0;
+  });
+
   console.log("EXITING");
   process.exit();
 })();
