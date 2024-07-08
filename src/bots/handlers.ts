@@ -77,7 +77,7 @@ async function collectLinks(this: Bot) {
       );
     });
 
-    conversations.push({ user, links: hrefs, url: this.page.url() });
+    conversations.unshift({ user, links: hrefs, url: this.page.url() });
 
     await delay(200);
   }
