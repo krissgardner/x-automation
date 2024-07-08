@@ -23,3 +23,8 @@ View the example file: [storage.example.json](storage.example.json).
 ```bash
 pnpm start
 ```
+
+## Todo list
+
+- Implement event management system
+
