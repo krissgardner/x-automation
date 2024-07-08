@@ -11,6 +11,7 @@ import {
 import { Action, ActionParams } from "@/actions";
 import handlers from "./handlers";
 import { Browser, Page } from "puppeteer";
+import { BotProfile } from "@/types";
 
 export interface BotParams {
   username: string;
@@ -171,6 +172,12 @@ class Bot {
 
   patchMeta(payload: any) {
     return dbManager.patchBotMeta(this.username, payload);
+  }
+
+  get dbProfile() {
+    return dbManager.profiles.find(
+      (p) => p.username === this.username,
+    ) as BotProfile;
   }
 }
 

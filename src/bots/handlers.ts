@@ -10,7 +10,7 @@ import {
 } from "@/actions";
 import { delay } from "@/utils";
 import Bot from "./Bot";
-import { MetaConversation } from "@/types";
+import { BotProfile, MetaConversation } from "@/types";
 import dbManager from "@/db";
 
 async function checkIfLoggedIn(this: Bot) {
@@ -89,6 +89,14 @@ async function collectLinks(this: Bot) {
       retries: 1,
     });
   });
+
+  // conversations.forEach((c) => {
+  //   this.addAction(SEND_MESSAGE, {
+  //     params: [c.user],
+  //     ignoreErrors: true,
+  //     retries: 1,
+  //   });
+  // });
 
   this.patchMeta({ conversations });
 
@@ -219,23 +227,20 @@ async function sendMessage(this: Bot, user: string) {
   await delay(100);
 
   let message = dbManager.bots.config.dmTemplate;
+  const profile = this.dbProfile;
 
   const regexp = /{{(\w+)}}/g; // matches {{variable}}
   message = message.replace(regexp, (_match, variable: string) => {
-    // @ts-ignore
-    const botParam = this[variable];
-
-    if (typeof botParam === "string") {
-      throw new Error(
-        `Variable "${variable}" is not defined or is not a string!`,
-      );
+    if (!(variable in profile)) {
+      throw new Error(`Variable "${variable}" is not defined!`);
     }
-
-    return botParam;
+    return String(profile[variable as keyof BotProfile]);
   });
 
   // Type the resulting message using keyboard events
   await this.page.keyboard.type(message);
+
+  // TODO: CLICK SEND OR HIT ENTER
 }
 
 async function repostMedia(this: Bot) {

@@ -11,7 +11,7 @@ export interface BrowserConnection {
   };
 }
 
-export interface Profile {
+export interface BotProfile {
   username: string;
   ads_power_profile_id: string;
   dmLink?: string;
@@ -30,7 +30,7 @@ export interface CredentialsStorage {
 
 export interface BotsStorage {
   config: Config;
-  profiles: Profile[];
+  profiles: BotProfile[];
 }
 
 export interface Storage {
