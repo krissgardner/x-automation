@@ -38,9 +38,8 @@ async function collectLinks(this: Bot) {
 
   await this.page.goto("https://x.com/messages");
 
-  await this.page.waitForNavigation({
-    timeout: 5000,
-    waitUntil: "networkidle2",
+  await this.page.waitForSelector(selectors.CONVERSATIONS, {
+    timeout: 10000,
   });
 
   const convoElements = await this.page.$$(selectors.CONVERSATIONS);
