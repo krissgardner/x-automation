@@ -89,7 +89,11 @@ async function collectLinks(this: Bot) {
   }
 
   conversations.forEach((c) => {
-    this.addAction(REPOST, { params: [c.links, c.user] });
+    this.addAction(REPOST, {
+      params: [c.links, c.user],
+      ignoreErrors: true,
+      retries: 1,
+    });
   });
 
   this.patchMeta({ conversations });
@@ -172,6 +176,11 @@ async function repost(this: Bot, urls: string[], user: string) {
     }
 
     if (reposted) {
+      this.addAction(SEND_MESSAGE, {
+        params: [user],
+        ignoreErrors: true,
+        retries: 1,
+      });
       break;
     }
   }
