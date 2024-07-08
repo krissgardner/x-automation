@@ -117,14 +117,14 @@ async function repost(this: Bot, urls: string[], user: string) {
   }
 
   const validUrls = urls.filter((url) => {
-    return url && url.includes("/status/");
+    return !!url && url.includes("/status/");
   });
 
   if (!validUrls.length) {
     throw new Error("Invalid URLs");
   }
 
-  for (let url in validUrls) {
+  for (let url of validUrls) {
     await this.page.goto(url);
 
     try {
@@ -268,7 +268,7 @@ async function repostMedia(this: Bot) {
 
   await this.page.goto(`https://x.com/${this.username}/media`);
 
-  await this.page.waitForSelector(selectors.MEDIA_LINKS);
+  await this.page.waitForSelector(selectors.MEDIA_LINKS, { timeout: 10000 });
 
   const relativeLinks = (
     await this.page.$$eval(selectors.MEDIA_LINKS, (links) =>
@@ -278,12 +278,12 @@ async function repostMedia(this: Bot) {
 
   const mediaUrls = relativeLinks
     .filter((l) => l.includes("/status/"))
-    .slice(10)
+    .slice(0, 10)
     .map((l) => l.replace(/(\/\w+\/status\/\d+).*/, "$1"))
     .map((l) => `https://x.com${l}`);
 
   mediaUrls.forEach((url) => {
-    this.addAction(REPOST, { params: [url] });
+    this.addAction(REPOST, { params: [[url], `@${this.username}`] });
   });
 }
 
