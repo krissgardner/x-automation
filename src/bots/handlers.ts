@@ -6,6 +6,7 @@ import {
   LOG_IN,
   REPOST,
   SEND_MESSAGE,
+  REPOST_MEDIA,
 } from "@/actions";
 import { delay } from "@/utils";
 import Bot from "./Bot";
@@ -20,6 +21,10 @@ async function logIn(this: Bot) {
 
 async function sendMessage(this: Bot) {
   // TODO sendMessage
+}
+
+async function repostMedia(this: Bot) {
+  // TODO repostMedia
 }
 
 async function collectLinks(this: Bot) {
@@ -84,73 +89,92 @@ async function collectLinks(this: Bot) {
     await delay(200);
   }
 
+  conversations.forEach((c) => {
+    this.addAction(REPOST, { params: [c.links, c.user] });
+  });
+
   this.patchMeta({ conversations });
 
   return conversations;
 }
 
-async function repost(this: Bot, url: string, user: string) {
+async function repost(this: Bot, urls: string[], user: string) {
   if (!this.browser) {
     throw new Error("Browser does not exist!");
-  }
-
-  if (!url || !url.includes("/status/")) {
-    throw new Error(`Invalid url: ${url}`);
   }
 
   if (this.page === undefined) {
     this.page = await this.browser.newPage();
   }
 
-  await this.page.goto(url);
-
-  await this.page.waitForSelector("article", {
-    timeout: 10000,
+  const validUrls = urls.filter((url) => {
+    return url && url.includes("/status/");
   });
 
-  const articles = await this.page.$$("article");
+  if (!validUrls.length) {
+    throw new Error("Invalid URLs");
+  }
 
-  for (const article of articles) {
-    const innerText = await this.page.evaluate(
-      (e: HTMLElement) => e.innerText,
-      article,
-    );
-    if (!innerText || !innerText.includes("@")) {
-      continue;
-    }
+  for (let url in validUrls) {
+    await this.page.goto(url);
 
     try {
-      const [, articleUser] = innerText.split("\n");
-      if (
-        !articleUser ||
-        articleUser.trim().toLowerCase() !== user.trim().toLowerCase()
-      ) {
-        continue;
-      }
+      await this.page.waitForSelector("article", {
+        timeout: 10000,
+      });
     } catch (e) {
-      // Not important at this stage
       continue;
     }
 
-    // Identified a tweet in the thread from the user
+    const articles = await this.page.$$("article");
 
-    const retweetBtn = await article.$('button[data-testid="retweet"]');
-    if (!retweetBtn) {
-      throw new Error("Retweet button not found");
+    let reposted = false;
+    for (const article of articles) {
+      const innerText = await this.page.evaluate(
+        (e: HTMLElement) => e.innerText,
+        article,
+      );
+      if (!innerText || !innerText.includes("@")) {
+        continue;
+      }
+
+      try {
+        const [, articleUser] = innerText.split("\n");
+        if (
+          !articleUser ||
+          articleUser.trim().toLowerCase() !== user.trim().toLowerCase()
+        ) {
+          continue;
+        }
+      } catch (e) {
+        // Not important at this stage
+        continue;
+      }
+
+      // Identified a tweet in the thread from the user
+      const retweetBtn = await article.$('button[data-testid="retweet"]');
+      if (!retweetBtn) {
+        throw new Error("Retweet button not found");
+      }
+
+      await retweetBtn.click();
+      await delay(500);
+
+      const repostDiv = await this.page.$(selectors.REPOST_MENU_ITEM);
+      if (!repostDiv) {
+        throw new Error("Repost div not found");
+      }
+
+      await repostDiv.click();
+      await delay(2000);
+
+      reposted = true;
+      break;
     }
 
-    await retweetBtn.click();
-    await delay(500);
-
-    const repostDiv = await this.page.$(selectors.REPOST_MENU_ITEM);
-    if (!repostDiv) {
-      throw new Error("Repost div not found");
+    if (reposted) {
+      break;
     }
-
-    await repostDiv.click();
-    await delay(1000);
-
-    break;
   }
 }
 
@@ -164,6 +188,7 @@ const handlers: Handlers = {
   [COLLECT_LINKS]: collectLinks,
   [SEND_MESSAGE]: sendMessage,
   [REPOST]: repost,
+  [REPOST_MEDIA]: repostMedia,
 };
 
 export default handlers;

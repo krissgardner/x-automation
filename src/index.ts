@@ -1,6 +1,7 @@
 import { BotManager } from "./bots";
 import { waitUntil, setupProcess } from "./utils";
-import { COLLECT_LINKS } from "@/actions";
+import { COLLECT_LINKS, REPOST_MEDIA } from "@/actions";
+import db from "@/db";
 
 setupProcess();
 
@@ -16,12 +17,13 @@ setupProcess();
       break;
     }
 
-    bot.addAction(COLLECT_LINKS);
-  }
+    await waitUntil(() => {
+      return botManager.getRunningBots().length < db.maxRunningBots;
+    });
 
-  await waitUntil(() => {
-    return botManager.getRunningBots().length === 0;
-  });
+    bot.addAction(COLLECT_LINKS);
+    bot.addAction(REPOST_MEDIA, { priority: 50 });
+  }
 
   console.log("EXITING");
   process.exit();

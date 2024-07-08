@@ -26,5 +26,6 @@ pnpm start
 
 ## Todo list
 
-- Implement event management system
+-[ ] Implement event management system
+-[ ] 
 
