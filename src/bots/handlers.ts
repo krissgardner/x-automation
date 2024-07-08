@@ -112,6 +112,10 @@ async function repost(this: Bot, urls: string[], user: string) {
     this.page = await this.browser.newPage();
   }
 
+  if (!user.includes("@")) {
+    user = "@" + user;
+  }
+
   const validUrls = urls.filter((url) => {
     return url && url.includes("/status/");
   });
@@ -178,31 +182,34 @@ async function repost(this: Bot, urls: string[], user: string) {
     }
 
     if (reposted) {
-      this.addAction(SEND_MESSAGE, {
-        params: [user],
-        ignoreErrors: true,
-        retries: 1,
-      });
+      if (!user.includes(this.username)) {
+        this.addAction(SEND_MESSAGE, {
+          params: [user],
+          ignoreErrors: true,
+          retries: 1,
+        });
+      }
+
       break;
     }
   }
 }
 
 async function sendMessage(this: Bot, user: string) {
-  if (!user) {
-    throw new Error("user not defined!");
-  }
-
-  if (!user.startsWith("@")) {
-    user = "@" + user;
-  }
-
   if (!this.browser) {
     throw new Error("Browser does not exist!");
   }
 
   if (this.page === undefined) {
     this.page = await this.browser.newPage();
+  }
+
+  if (!user) {
+    throw new Error("user not defined!");
+  }
+
+  if (!user.startsWith("@")) {
+    user = "@" + user;
   }
 
   const conversations = this.meta.conversations || [];
@@ -251,7 +258,33 @@ async function sendMessage(this: Bot, user: string) {
 }
 
 async function repostMedia(this: Bot) {
-  // TODO repostMedia
+  if (!this.browser) {
+    throw new Error("Browser does not exist!");
+  }
+
+  if (this.page === undefined) {
+    this.page = await this.browser.newPage();
+  }
+
+  await this.page.goto(`https://x.com/${this.username}/media`);
+
+  await this.page.waitForSelector(selectors.MEDIA_LINKS);
+
+  const relativeLinks = (
+    await this.page.$$eval(selectors.MEDIA_LINKS, (links) =>
+      links.map((link) => link.getAttribute("href")),
+    )
+  ).filter((link) => !!link) as string[];
+
+  const mediaUrls = relativeLinks
+    .filter((l) => l.includes("/status/"))
+    .slice(10)
+    .map((l) => l.replace(/(\/\w+\/status\/\d+).*/, "$1"))
+    .map((l) => `https://x.com${l}`);
+
+  mediaUrls.forEach((url) => {
+    this.addAction(REPOST, { params: [url] });
+  });
 }
 
 export type Handlers = {
