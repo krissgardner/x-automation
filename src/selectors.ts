@@ -4,3 +4,4 @@ export const DM_SCROLLER_CONTAINER = `#react-root div[data-testid="DmScrollerCon
 export const REPOST_MENU_ITEM = `#layers div[role=menuitem]`;
 export const TEXTBOX =
   "#react-root div.DraftEditor-editorContainer > div > div > div > div";
+export const SEND_BUTTON = `#react-root main section:nth-child(2) button[aria-label="Send"]`;

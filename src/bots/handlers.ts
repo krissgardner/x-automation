@@ -240,7 +240,14 @@ async function sendMessage(this: Bot, user: string) {
   // Type the resulting message using keyboard events
   await this.page.keyboard.type(message);
 
-  // TODO: CLICK SEND OR HIT ENTER
+  await this.page.waitForSelector(selectors.SEND_BUTTON);
+  const sendButton = await this.page.$(selectors.SEND_BUTTON);
+  if (!sendButton) {
+    throw new Error("Send button not found!");
+  }
+
+  await sendButton.click();
+  await delay(1000);
 }
 
 async function repostMedia(this: Bot) {
