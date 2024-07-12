@@ -191,38 +191,29 @@ async function repost(this: Bot, urls: string[], user: string) {
 
       // Identified a tweet in the thread from the user
 
-      const retweetBtn = await article.$('button[data-testid="retweet"]');
       const unretweetBtn = await article.$('button[data-testid="unretweet"]');
-
-      // Already retweeted
       if (unretweetBtn) {
-        break;
+        await unretweetBtn.click();
+        await delay(500);
+
+        const undoConfirm = await this.page.$(selectors.LAYERS_MENU_ITEM);
+        await undoConfirm?.click();
+        await delay(500);
       }
 
-      if (!retweetBtn) {
-        throw new Error("Retweet button not found");
+      // TODO: ADD LOGS, BUT DONT THROW ERRORS HERE
+      const retweetBtn = await article.$('button[data-testid="retweet"]');
+      if (retweetBtn) {
+        await retweetBtn.click();
+        await delay(500);
+
+        const repostDiv = await this.page.$(selectors.LAYERS_MENU_ITEM);
+        if (repostDiv) {
+          await repostDiv?.click();
+          await delay(2000);
+          reposted = true;
+        }
       }
-
-      await retweetBtn.click();
-      await delay(500);
-
-      const repostDiv = await this.page.$(selectors.REPOST_MENU_ITEM);
-      if (!repostDiv) {
-        throw new Error("Repost div not found");
-      }
-
-      // const repostText = await this.page.evaluate(
-      //   (e: HTMLElement) => e.innerText,
-      //   article,
-      // );
-      //
-      // if (!repostText.toLowerCase().includes("undo")) {
-      //   await repostDiv.click();
-      // }
-
-      await repostDiv.click();
-      await delay(2000);
-      reposted = true;
 
       break;
     }

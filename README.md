@@ -29,4 +29,5 @@ pnpm start
 -[ ] Implement event management system
 -[ ] Create better type checking for handlers (browser, page)
 -[ ] Create MongoDB alternative
+-[ ] Add special logs for user actions
 
