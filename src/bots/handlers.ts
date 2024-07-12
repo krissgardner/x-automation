@@ -68,16 +68,16 @@ async function collectLinks(this: Bot) {
   const conversations: MetaConversation[] = [];
 
   for (const elem of convoElements) {
-    const textContent = await this.page.evaluate(
-      (e: HTMLElement) => e.textContent,
+    const innerText = await this.page.evaluate(
+      (e: HTMLElement) => e.innerText,
       elem,
     );
 
-    if (!textContent) {
+    if (!innerText) {
       continue;
     }
 
-    const matches = textContent.match(/@[A-Za-z0-9_]{4,14}/);
+    const matches = innerText.match(/@[A-Za-z0-9_]{4,14}/);
     if (!matches || matches.length < 1) {
       continue;
     }
