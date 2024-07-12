@@ -68,18 +68,20 @@ async function collectLinks(this: Bot) {
   const conversations: MetaConversation[] = [];
 
   for (const elem of convoElements) {
-    const innerText = await this.page.evaluate(
-      (e: HTMLElement) => e.innerText,
+    const textContent = await this.page.evaluate(
+      (e: HTMLElement) => e.textContent,
       elem,
     );
-    if (!innerText || !innerText.includes("@")) {
+
+    if (!textContent) {
       continue;
     }
 
-    const [, user] = innerText.split("\n");
-    if (!user) {
-      throw new Error("User handler not found!");
+    const matches = textContent.match(/@[A-Za-z0-9_]{4,14}/);
+    if (!matches || matches.length < 1) {
+      continue;
     }
+    const user = matches[0];
 
     await elem.click();
 
