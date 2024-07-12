@@ -8,10 +8,10 @@ import {
   SEND_MESSAGE,
   REPOST_MEDIA,
 } from "@/actions";
-import { delay } from "@/utils";
+import { delay, getDeltaInMilliseconds } from "@/utils";
 import Bot from "./Bot";
 import { BotProfile, MetaConversation } from "@/types";
-import dbManager from "@/db";
+import db from "@/db";
 
 async function checkIfLoggedIn(this: Bot) {
   // TODO checkIfLoggedIn
@@ -36,6 +36,12 @@ async function collectLinks(this: Bot) {
     timeout: 10000,
   });
 
+  // Filter conversations by time
+  const { dmFilters } = db.bots.config;
+  const deltaInMs = getDeltaInMilliseconds(dmFilters);
+
+  const now = new Date();
+
   let prevCount = 0;
   let newCount = -1;
   let scrollRetries = 3;
@@ -58,6 +64,36 @@ async function collectLinks(this: Bot) {
     const currentConversations = await this.page.$$(selectors.CONVERSATIONS);
     newCount = currentConversations.length;
 
+    // If time filters exist
+    if (deltaInMs) {
+      const timeTags = await this.page.$$eval(
+        `${selectors.CONVERSATIONS} time`,
+        (timeEls: HTMLTimeElement[]) => timeEls.map((t) => t.dateTime),
+      );
+
+      let oldestDate: Date | null = null;
+
+      for (let timeStr of timeTags) {
+        if (!timeStr) {
+          continue;
+        }
+
+        const date = new Date(timeStr);
+
+        if (oldestDate === null || date < oldestDate) {
+          oldestDate = date;
+        }
+      }
+
+      if (oldestDate !== null) {
+        const diffInMS = now.getTime() - oldestDate.getTime();
+
+        if (diffInMS > deltaInMs) {
+          break;
+        }
+      }
+    }
+
     if (prevCount !== newCount) {
       scrollRetries = 3;
     }
@@ -68,15 +104,30 @@ async function collectLinks(this: Bot) {
   const conversations: MetaConversation[] = [];
 
   for (const elem of convoElements) {
+    let timeStr;
+
+    try {
+      timeStr = await elem.$eval("time", (el) => el?.dateTime);
+    } catch (e) {
+      continue;
+    }
+
+    if (!timeStr) {
+      continue;
+    }
+
+    const lastTime = new Date(timeStr);
+    if (!!deltaInMs && now.getTime() - lastTime.getTime() > deltaInMs) {
+      continue;
+    }
+
     const innerText = await this.page.evaluate(
       (e: HTMLElement) => e.innerText,
       elem,
     );
-
     if (!innerText) {
       continue;
     }
-
     const matches = innerText.match(/@[A-Za-z0-9_]{4,14}/);
     if (!matches || matches.length < 1) {
       continue;
@@ -89,7 +140,7 @@ async function collectLinks(this: Bot) {
 
     const container = await this.page.$(selectors.DM_SCROLLER_CONTAINER);
     if (container === null) {
-      throw new Error("selectors.DM_SCROLLER_CONTAINER returned null");
+      throw new Error("DM_SCROLLER_CONTAINER not found!");
     }
 
     // Get all a links inside container, then get all href attributes
@@ -118,14 +169,6 @@ async function collectLinks(this: Bot) {
       retries: 1,
     });
   });
-
-  // conversations.forEach((c) => {
-  //   this.addAction(SEND_MESSAGE, {
-  //     params: [c.user],
-  //     ignoreErrors: true,
-  //     retries: 1,
-  //   });
-  // });
 
   this.patchMeta({ conversations });
 
@@ -270,7 +313,7 @@ async function sendMessage(this: Bot, user: string) {
   await textbox.click();
   await delay(500);
 
-  let message = dbManager.bots.config.dmTemplate;
+  let message = db.bots.config.dmTemplate;
   const profile = this.dbProfile;
 
   const regexp = /{{(\w+)}}/g; // matches {{variable}}

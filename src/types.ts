@@ -20,6 +20,11 @@ export interface BotProfile {
 export interface Config {
   maxRunningBots: number;
   dmTemplate: string;
+  dmFilters?: {
+    days: number | null;
+    hours: number | null;
+    minutes: number | null;
+  };
 }
 
 export interface CredentialsStorage {

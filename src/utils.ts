@@ -1,3 +1,5 @@
+import { Config } from "@/types";
+
 export function shuffle<T extends any[]>(array: T) {
   const result = [...array];
   let index = result.length;
@@ -58,4 +60,16 @@ export const setupProcess = () => {
   process.on("SIGINT", exitHandler.bind(null, { exit: true }));
   process.on("SIGUSR1", exitHandler.bind(null, { exit: true }));
   process.on("SIGUSR2", exitHandler.bind(null, { exit: true }));
+};
+
+export const getDeltaInMilliseconds = (dmFilters: Config["dmFilters"]) => {
+  if (!dmFilters) {
+    return 0;
+  }
+  const { days, hours, minutes } = dmFilters;
+
+  const totalDays = Number(days) || 0;
+  const totalHours = totalDays * 24 + (Number(hours) || 0);
+  const totalMinutes = totalHours * 60 + (Number(minutes) || 0);
+  return totalMinutes * 60 * 1000;
 };
