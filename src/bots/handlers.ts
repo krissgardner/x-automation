@@ -36,6 +36,33 @@ async function collectLinks(this: Bot) {
     timeout: 10000,
   });
 
+  let prevCount = 0;
+  let newCount = -1;
+  let scrollRetries = 3;
+
+  while (prevCount !== newCount || scrollRetries > 0) {
+    prevCount = newCount;
+    scrollRetries -= 1;
+
+    const container = await this.page.$(selectors.CONVERSATIONS_SCROLLABLE);
+    if (!container) {
+      throw new Error("Could not find the conversations container!");
+    }
+
+    await this.page.evaluate((container) => {
+      container.scrollTop = container.scrollHeight;
+    }, container);
+
+    await delay(3000);
+
+    const currentConversations = await this.page.$$(selectors.CONVERSATIONS);
+    newCount = currentConversations.length;
+
+    if (prevCount !== newCount) {
+      scrollRetries = 3;
+    }
+  }
+
   const convoElements = await this.page.$$(selectors.CONVERSATIONS);
 
   const conversations: MetaConversation[] = [];
@@ -79,7 +106,7 @@ async function collectLinks(this: Bot) {
 
     conversations.unshift({ user, links: hrefs, url: this.page.url() });
 
-    await delay(200);
+    await delay(1000);
   }
 
   conversations.forEach((c) => {
