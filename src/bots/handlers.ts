@@ -148,7 +148,7 @@ async function repost(this: Bot, urls: string[], user: string) {
   });
 
   if (!validUrls.length) {
-    throw new Error("Invalid URLs");
+    throw new Error(`Invalid URLs for ${user}`);
   }
 
   for (let url of validUrls) {
@@ -188,7 +188,15 @@ async function repost(this: Bot, urls: string[], user: string) {
       }
 
       // Identified a tweet in the thread from the user
+
       const retweetBtn = await article.$('button[data-testid="retweet"]');
+      const unretweetBtn = await article.$('button[data-testid="unretweet"]');
+
+      // Already retweeted
+      if (unretweetBtn) {
+        break;
+      }
+
       if (!retweetBtn) {
         throw new Error("Retweet button not found");
       }
@@ -201,10 +209,19 @@ async function repost(this: Bot, urls: string[], user: string) {
         throw new Error("Repost div not found");
       }
 
+      // const repostText = await this.page.evaluate(
+      //   (e: HTMLElement) => e.innerText,
+      //   article,
+      // );
+      //
+      // if (!repostText.toLowerCase().includes("undo")) {
+      //   await repostDiv.click();
+      // }
+
       await repostDiv.click();
       await delay(2000);
-
       reposted = true;
+
       break;
     }
 
@@ -258,7 +275,7 @@ async function sendMessage(this: Bot, user: string) {
   }
 
   await textbox.click();
-  await delay(100);
+  await delay(500);
 
   let message = dbManager.bots.config.dmTemplate;
   const profile = this.dbProfile;
@@ -272,7 +289,10 @@ async function sendMessage(this: Bot, user: string) {
   });
 
   // Type the resulting message using keyboard events
-  await this.page.keyboard.type(message);
+  await this.page.keyboard.type(message, {
+    delay: 10,
+  });
+  await delay(200);
 
   await this.page.waitForSelector(selectors.SEND_BUTTON);
   const sendButton = await this.page.$(selectors.SEND_BUTTON);
