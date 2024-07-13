@@ -3,7 +3,7 @@ import { Config } from "@/types";
 export function shuffle<T extends any[]>(array: T) {
   const result = [...array];
   let index = result.length;
-  let randIndex;
+  let randIndex: number;
 
   while (index !== 0) {
     randIndex = Math.floor(Math.random() * index);
