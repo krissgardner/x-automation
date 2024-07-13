@@ -25,10 +25,7 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [
-        { from: "storage.example.json", to: "./storage.json" },
-        { from: "start.sh", to: "./" },
-      ],
+      patterns: [{ from: "storage.example.json", to: "./storage.json" }],
     }),
   ],
 };
