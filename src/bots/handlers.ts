@@ -104,7 +104,7 @@ async function collectLinks(this: Bot) {
   const conversations: MetaConversation[] = [];
 
   for (const elem of convoElements) {
-    let timeStr;
+    let timeStr: string | undefined;
 
     try {
       timeStr = await elem.$eval("time", (el) => el?.dateTime);
