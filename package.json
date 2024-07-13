@@ -5,22 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "tsc",
-    "collectLinks": "ts-node src/scripts/collectLinks.ts"
+    "build": "tsc -p tsconfig.json"
   },
   "author": "Kriss Gardner",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^20.14.5",
     "axios": "^1.7.2",
-    "fake-useragent": "^1.0.1",
-    "prettier": "^3.3.2",
     "puppeteer": "^22.10.1",
     "simple-json-db": "^2.0.0",
-    "ts-node": "^10.9.2",
+    "tslib": "^2.6.3",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "@types/node": "^20.14.5",
+    "prettier": "^3.3.2",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
   }
 }
