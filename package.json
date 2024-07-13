@@ -1,6 +1,6 @@
 {
   "name": "x-automation",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Create browser automations for X (Twitter)",
   "main": "index.js",
   "scripts": {
