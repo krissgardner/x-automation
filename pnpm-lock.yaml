@@ -13,7 +13,7 @@ importers:
         version: 1.7.2
       puppeteer:
         specifier: ^22.10.1
-        version: 22.10.1(typescript@5.4.5)
+        version: 22.10.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@6.0.4)
       simple-json-db:
         specifier: ^2.0.0
         version: 2.0.0
@@ -24,6 +24,9 @@ importers:
       '@types/node':
         specifier: ^20.14.5
         version: 20.14.5
+      bufferutil:
+        specifier: ^4.0.8
+        version: 4.0.8
       copy-webpack-plugin:
         specifier: ^12.0.2
         version: 12.0.2(webpack@5.93.0(webpack-cli@5.1.4))
@@ -39,6 +42,9 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
+      utf-8-validate:
+        specifier: ^6.0.4
+        version: 6.0.4
       webpack:
         specifier: ^5.93.0
         version: 5.93.0(webpack-cli@5.1.4)
@@ -334,6 +340,10 @@ packages:
 
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
+
+  bufferutil@4.0.8:
+    resolution: {integrity: sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==}
+    engines: {node: '>=6.14.2'}
 
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -778,6 +788,10 @@ packages:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
 
+  node-gyp-build@4.8.1:
+    resolution: {integrity: sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==}
+    hasBin: true
+
   node-releases@2.0.14:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
 
@@ -1108,6 +1122,10 @@ packages:
 
   urlpattern-polyfill@10.0.0:
     resolution: {integrity: sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg==}
+
+  utf-8-validate@6.0.4:
+    resolution: {integrity: sha512-xu9GQDeFp+eZ6LnCywXN/zBancWvOpUMzgjLPSjy4BRHSmTelvn2E0DG0o1sTiw5hkCKBHo8rwSKncfRfv2EEQ==}
+    engines: {node: '>=6.14.2'}
 
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
@@ -1527,6 +1545,10 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
+  bufferutil@4.0.8:
+    dependencies:
+      node-gyp-build: 4.8.1
+
   callsites@3.1.0: {}
 
   caniuse-lite@1.0.30001641: {}
@@ -1921,6 +1943,8 @@ snapshots:
 
   netmask@2.0.2: {}
 
+  node-gyp-build@4.8.1: {}
+
   node-releases@2.0.14: {}
 
   normalize-path@3.0.0: {}
@@ -2012,24 +2036,24 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  puppeteer-core@22.10.1:
+  puppeteer-core@22.10.1(bufferutil@4.0.8)(utf-8-validate@6.0.4):
     dependencies:
       '@puppeteer/browsers': 2.2.3
       chromium-bidi: 0.5.23(devtools-protocol@0.0.1286932)
       debug: 4.3.5
       devtools-protocol: 0.0.1286932
-      ws: 8.17.0
+      ws: 8.17.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  puppeteer@22.10.1(typescript@5.4.5):
+  puppeteer@22.10.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@6.0.4):
     dependencies:
       '@puppeteer/browsers': 2.2.3
       cosmiconfig: 9.0.0(typescript@5.4.5)
       devtools-protocol: 0.0.1286932
-      puppeteer-core: 22.10.1
+      puppeteer-core: 22.10.1(bufferutil@4.0.8)(utf-8-validate@6.0.4)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -2264,6 +2288,10 @@ snapshots:
 
   urlpattern-polyfill@10.0.0: {}
 
+  utf-8-validate@6.0.4:
+    dependencies:
+      node-gyp-build: 4.8.1
+
   v8-compile-cache-lib@3.0.1: {}
 
   watchpack@2.4.1:
@@ -2343,7 +2371,10 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.17.0: {}
+  ws@8.17.0(bufferutil@4.0.8)(utf-8-validate@6.0.4):
+    optionalDependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 6.0.4
 
   y18n@5.0.8: {}
 
