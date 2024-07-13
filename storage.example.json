@@ -1,21 +1,25 @@
 {
   "credentials": {
-    "adsPowerEndpoint": "https://local.adspower.net:12345",
-    "adsPowerLocalEndpoint": "http://localhost:12345",
+    "adsPowerEndpoint": "http://local.adspower.net:50325",
+    "adsPowerLocalEndpoint": "http://localhost:50325",
     "adsPowerApiKey": "your_api_key"
   },
   "bots": {
     "config": {
       "maxRunningBots": 10,
-      "dmTemplate": "Click on this: %dmLink%!"
+      "dmFilters": {
+        "days": null,
+        "hours": null,
+        "minutes": null
+      },
+      "dmTemplate": "Hey! Have you seen my latest post: {{dmLink}}"
     },
     "profiles": [
       {
-        "username": "username",
-        "ads_power_profile_id": "profile_id_1",
-        "dmLink": "https://krissgardner.com"
+        "username": "x_username",
+        "ads_power_profile_id": "profile_id",
+        "dmLink": "https://x.com/"
       }
     ]
-  },
-  "meta": {}
+  }
 }
