@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "build:bundle": "webpack --mode production",
-    "build:exec": "nexe --build -i ./dist/main.js -o ./dist/main",
+    "build:exec": "nexe --build -i ./dist/main.js -o ./dist/main --verbose",
     "build": "pnpm build:bundle && pnpm build:exec"
   },
   "author": "Kriss Gardner",
