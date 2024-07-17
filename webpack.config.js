@@ -1,6 +1,5 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const WebpackObfuscator = require("webpack-obfuscator");
 
 module.exports = {
@@ -26,12 +25,10 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   optimization: {
-    minimizer: [new UglifyJsPlugin()],
+    minimize: true,
   },
   plugins: [
-    new WebpackObfuscator({
-      rotateStringArray: true,
-    }),
+    new WebpackObfuscator(),
     new CopyPlugin({
       patterns: [{ from: "storage.example.json", to: "./storage.json" }],
     }),
