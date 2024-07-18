@@ -25,6 +25,7 @@
     "prettier": "^3.3.2",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
     "utf-8-validate": "^6.0.4",
     "webpack": "^5.93.0",
